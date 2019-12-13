@@ -1,0 +1,8 @@
+.Buttons {
+    display: grid;
+    grid-template-columns: 75% 25%;
+    grid-template-rows: none;
+    grid-template-areas:
+        "functions operators"
+        "buttons operators";
+}
