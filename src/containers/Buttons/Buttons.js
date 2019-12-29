@@ -5,12 +5,12 @@ import Numbers from "./Numbers/Numbers";
 import Functions from "./Functions/Functions";
 import Operators from "./Operators/Operators";
 
-const Buttons = () => {
+const Buttons = (props) => {
 	return (
 		<div className={classes.Buttons}>
-			<Functions />
-			<Numbers />
-			<Operators />
+			<Functions buttonClicked={props.buttonClicked} />
+			<Numbers buttonClicked={props.buttonClicked} />
+			<Operators buttonClicked={props.buttonClicked} />
 		</div>
 	);
 };
