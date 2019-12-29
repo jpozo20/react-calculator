@@ -18,6 +18,7 @@ const Constants = {
 		PowerN: "x\u207f",
 		Logarithm: "log",
 		NaturalLogarithm: "logn",
+		Clear: "C",
 	},
 };
 

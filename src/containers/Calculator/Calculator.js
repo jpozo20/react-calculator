@@ -152,11 +152,6 @@ class Calculator extends Component {
 				this.powerTwo(input, prevResult, currOperation);
 				break;
 
-			case Helpers.decodeHtml(Constants.FunctionKeys.PowerN):
-				currOperation = Constants.FunctionKeys.PowerN;
-				this.powerN(input, prevResult, currOperation);
-				break;
-
 			case Helpers.decodeHtml(Constants.FunctionKeys.Logarithm):
 				currOperation = Constants.FunctionKeys.Logarithm;
 				this.logarithm(input, prevResult, currOperation);
@@ -167,9 +162,22 @@ class Calculator extends Component {
 				this.logarithmNatural(input, prevResult, currOperation);
 				break;
 
+			case Helpers.decodeHtml(Constants.FunctionKeys.Clear):
+				this.clear();
+				break;
+
 			default:
 				break;
 		}
+	};
+
+	clear = () => {
+		this.setState({
+			input: "0",
+			accumulator: 0,
+			prevResult: "",
+			currOperation: "",
+		});
 	};
 
 	add = (result, previousResult, currOperation) => {
