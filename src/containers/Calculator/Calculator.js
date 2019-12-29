@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import classes from "./Calculator.module.css";
 
 import Buttons from "../Buttons/Buttons";
-import Screen from "../../components/Screen/Screen";
-import Helpers from "../../helpers/Helpers";
 import Constants from "../../helpers/Constants";
+import Helpers from "../../helpers/Helpers";
 import Numbers from "../Buttons/Numbers/Numbers";
+import Screen from "../../components/Screen/Screen";
 
 class Calculator extends Component {
 	state = {
@@ -112,7 +112,7 @@ class Calculator extends Component {
 
 			case Helpers.decodeHtml(Constants.OperatorKeys.Delete):
 				// If there is only one digit, display a zero
-				//Otherwise, delete the last digit
+				// Otherwise, delete the last digit
 				if (input.length === 1) input = "0";
 				else input = input.slice(0, -1);
 				this.setState({
@@ -326,4 +326,5 @@ class Calculator extends Component {
 		});
 	};
 }
+
 export default Calculator;
