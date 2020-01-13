@@ -4,7 +4,6 @@ import classes from "./Calculator.module.css";
 import Buttons from "../Buttons/Buttons";
 import Constants from "../../helpers/Constants";
 import Helpers from "../../helpers/Helpers";
-import Numbers from "../Buttons/Numbers/Numbers";
 import Screen from "../../components/Screen/Screen";
 
 class Calculator extends Component {
@@ -14,6 +13,7 @@ class Calculator extends Component {
 		prevResult: "",
 		currOperation: "",
 	};
+
 	render() {
 		return (
 			<div className={classes.Calculator}>
@@ -23,10 +23,28 @@ class Calculator extends Component {
 		);
 	}
 
+	componentDidMount() {
+		document.addEventListener("keyup", this.handleKeyPress, false);
+	}
+
 	handleClick = (event) => {
 		const button = event.target;
 		const operation = button.textContent;
 		const action = button.getAttribute("data-action");
+		this.handleInput(action, operation);
+	};
+
+	handleKeyPress = (event) => {
+		const isNumeric = !isNaN(event.key) || event.key === Constants.SpecialKeys.DecimalPoint;
+		if (isNumeric) {
+			this.handleInput("number", event.key);
+		} else {
+			const eventResult = Helpers.getOperationFromKeyPress(event);
+			this.handleInput(eventResult.action, eventResult.operation);
+		}
+	};
+
+	handleInput = (action, operation) => {
 		switch (action) {
 			case "number":
 				this.handleNumber(operation);
