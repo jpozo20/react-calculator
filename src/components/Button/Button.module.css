@@ -8,3 +8,8 @@
 .Button:hover {
     background-color: lightgray;
 }
+
+.Active {
+    background-color: lightgray;
+    border: 1px solid blue;
+}

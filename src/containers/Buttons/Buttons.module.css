@@ -6,8 +6,3 @@
         "functions operators"
         "buttons operators";
 }
-
-.Button.Active {
-    background-color: lightgray;
-    border: 1px solid lightcoral;
-}

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import classes from "./Calculator.module.css";
+import buttonClasses from "../../components/Button/Button.module.css";
 
 import Buttons from "../Buttons/Buttons";
 import Constants from "../../helpers/Constants";
@@ -12,6 +13,7 @@ class Calculator extends Component {
 		accumulator: 0,
 		prevResult: "",
 		currOperation: "",
+		prevButton: null,
 	};
 
 	render() {
@@ -27,11 +29,33 @@ class Calculator extends Component {
 		document.addEventListener("keyup", this.handleKeyPress, false);
 	}
 
+	addActiveStyle = (button, action) => {
+		if (
+			action === "number" ||
+			button.textContent === Constants.FunctionKeys.Clear ||
+			button.textContent === Constants.OperatorKeys.Delete ||
+			button.textContent === Constants.OperatorKeys.Equals
+		) {
+			return;
+		}
+
+		button.classList.add(buttonClasses.Active);
+		const prevButton = this.state.prevButton;
+		if (prevButton != null && prevButton !== button) {
+			prevButton.classList.remove(buttonClasses.Active);
+		}
+		this.setState({
+			prevButton: button,
+		});
+	};
+
 	handleClick = (event) => {
+		console.log(buttonClasses);
 		const button = event.target;
 		const operation = button.textContent;
 		const action = button.getAttribute("data-action");
 		this.handleInput(action, operation);
+		this.addActiveStyle(button, action);
 	};
 
 	handleKeyPress = (event) => {
@@ -146,8 +170,6 @@ class Calculator extends Component {
 		let currOperation = "";
 		let input = this.state.input;
 		let prevResult = this.state.prevResult;
-		let prevOperation = this.state.currOperation;
-
 		// Use the accumulator to apply the last operation to the previos result
 		if (usePreviousOperation) {
 			input = this.state.accumulator;
@@ -190,6 +212,7 @@ class Calculator extends Component {
 	};
 
 	clear = () => {
+		this.state.prevButton.classList.remove(buttonClasses.Active);
 		this.setState({
 			input: "0",
 			accumulator: 0,
