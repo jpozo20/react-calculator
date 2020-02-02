@@ -6,6 +6,7 @@ const Helpers = {
 		txt.innerHTML = htmlEntity;
 		return txt.value;
 	},
+
 	getOperationFromKeyPress: (event) => {
 		const eventKey = event.key;
 		const result = {
