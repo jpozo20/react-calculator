@@ -4,7 +4,7 @@ import buttonClasses from "../../components/Button/Button.module.css";
 
 import Buttons from "../Buttons/Buttons";
 import Constants from "../../helpers/Constants";
-import Helpers from "../../helpers/Helpers";
+import Helpers from "../../helpers/helpers";
 import Screen from "../../components/Screen/Screen";
 
 class Calculator extends Component {
@@ -234,6 +234,7 @@ class Calculator extends Component {
 
 	subtract = (input, previousResult, currOperation) => {
 		let prevResult = "";
+		//if()
 		if (previousResult === "" || previousResult === "0") {
 			prevResult = Number(input);
 		} else {
@@ -249,13 +250,15 @@ class Calculator extends Component {
 	};
 
 	multiply = (input, previousResult, currOperation) => {
-		if (input === "0") return;
-
 		let prevResult = "";
-		if (previousResult === "" || previousResult === "0") {
-			prevResult = Number(input);
+		if (input !== "0") {
+			if (previousResult === "" || previousResult === "0") {
+				prevResult = Number(input);
+			} else {
+				prevResult = Number(previousResult) * Number(input);
+			}
 		} else {
-			prevResult = Number(previousResult) * Number(input);
+			prevResult = Number(previousResult);
 		}
 
 		this.setState({
@@ -267,13 +270,15 @@ class Calculator extends Component {
 	};
 
 	divide = (input, previousResult, currOperation) => {
-		if (input === "0") return;
-
 		let prevResult = "";
-		if (previousResult === "" || previousResult === "0") {
-			prevResult = Number(input);
+		if (input !== "0") {
+			if (previousResult === "" || previousResult === "0") {
+				prevResult = Number(input);
+			} else {
+				prevResult = Number(previousResult) / Number(input);
+			}
 		} else {
-			prevResult = Number(previousResult) / Number(input);
+			prevResult = Number(previousResult);
 		}
 
 		this.setState({
