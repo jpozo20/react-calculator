@@ -11,15 +11,20 @@ class Calculator extends Component {
 	state = {
 		input: "0",
 		accumulator: 0,
-		prevResult: "",
+		prevResult: 0,
+		prevResultString: "",
 		currOperation: "",
 		prevButton: null,
+		shouldUpdateInput: false,
 	};
-
+	noRenderState = {
+		prevResult: 0,
+		shouldUpdateWithoutRender: false,
+	};
 	render() {
 		return (
 			<div className={classes.Calculator}>
-				<Screen input={this.state.input} prevResult={this.state.prevResult} />
+				<Screen input={this.state.input} prevResult={this.state.prevResultString} />
 				<Buttons buttonClicked={this.handleClick} />
 			</div>
 		);
@@ -50,7 +55,6 @@ class Calculator extends Component {
 	};
 
 	handleClick = (event) => {
-		console.log(buttonClasses);
 		const button = event.target;
 		const operation = button.textContent;
 		const action = button.getAttribute("data-action");
@@ -90,6 +94,7 @@ class Calculator extends Component {
 		let parsed = Number(input);
 
 		// To avoid concatenating the current number to the initial zero
+		if (this.state.shouldUpdateInput) input = "";
 		if (input === "0") input = "";
 
 		if (operation === Constants.SpecialKeys.DecimalPoint) {
@@ -108,6 +113,7 @@ class Calculator extends Component {
 		}
 		this.setState({
 			input: input,
+			shouldUpdateInput: false,
 		});
 	};
 
@@ -212,80 +218,181 @@ class Calculator extends Component {
 	};
 
 	clear = () => {
-		this.state.prevButton.classList.remove(buttonClasses.Active);
+		//Make sure the button is not null
+		if (this.state.prevButton) {
+			this.state.prevButton.classList.remove(buttonClasses.Active);
+		}
 		this.setState({
 			input: "0",
 			accumulator: 0,
-			prevResult: "",
+			prevResult: 0,
+			prevResultString: "",
 			currOperation: "",
 		});
 	};
 
-	add = (result, previousResult, currOperation) => {
-		let prevResult = Number(previousResult) + Number(result);
+	add = (input, previousResult, currOperation) => {
+		//If the calc is cleared and they press an operation button, do nothing
+		let prevResultString = this.state.prevResultString;
+		if (input === "0" && previousResult === 0) return;
 
+		let lastChar = prevResultString.length - 1;
+		let addChar = Constants.OperatorKeys.Add;
+		currOperation = prevResultString[lastChar];
+
+		if (previousResult === "" || previousResult === 0) {
+			previousResult = Number(input);
+			prevResultString = input + "+";
+		} else {
+			//If there's an operation in course, switch the operation to addition
+			if (currOperation !== addChar) {
+				if (input == previousResult) {
+					prevResultString = Helpers.switchOperation(prevResultString, addChar);
+					currOperation = addChar;
+				} else {
+					//Otherwise, execute previous operation and continue
+					this.noRenderState.shouldUpdateWithoutRender = true;
+					this.handleOperator(currOperation);
+
+					//Update local state before applying current operation
+					previousResult = this.noRenderState.prevResult;
+
+					//Apply current operation
+					prevResultString = prevResultString + input + "+";
+					input = previousResult;
+				}
+			} else {
+				previousResult = Number(previousResult) + Number(input);
+				prevResultString = prevResultString + input + "+";
+				input = previousResult;
+			}
+		}
+
+		if (this.noRenderState.shouldUpdateWithoutRender) {
+			this.noRenderState.prevResult = previousResult;
+		}
 		this.setState({
-			input: "0",
-			accumulator: result,
-			prevResult: prevResult,
+			input: input,
+			accumulator: input,
+			prevResult: previousResult,
+			prevResultString: prevResultString,
 			currOperation: currOperation,
+			shouldUpdateInput: true,
 		});
 	};
 
 	subtract = (input, previousResult, currOperation) => {
-		let prevResult = "";
-		//if()
-		if (previousResult === "" || previousResult === "0") {
-			prevResult = Number(input);
+		//If the calc is cleared and the press an operation button, do nothing
+		let prevResultString = this.state.prevResultString;
+		if (input === "0" && previousResult === 0) return;
+
+		let lastChar = prevResultString.length - 1;
+		let substractChar = Constants.OperatorKeys.Substract;
+		currOperation = prevResultString[lastChar];
+
+		if (previousResult === "" || previousResult === 0) {
+			previousResult = Number(input);
+			prevResultString = input + "-";
 		} else {
-			prevResult = Number(previousResult) - Number(input);
+			//If there's an operation in course, switch the operation to addition
+			if (currOperation !== substractChar && input == previousResult) {
+				prevResultString = Helpers.switchOperation(prevResultString, substractChar);
+				currOperation = substractChar;
+			} else {
+				previousResult = Number(previousResult) - Number(input);
+				prevResultString = prevResultString + input + "-";
+				input = previousResult;
+			}
 		}
 
+		if (this.noRenderState.shouldUpdateWithoutRender) {
+			this.noRenderState.prevResult = previousResult;
+		}
 		this.setState({
-			input: "0",
+			input: input,
 			accumulator: input,
-			prevResult: prevResult,
+			prevResult: previousResult,
+			prevResultString: prevResultString,
 			currOperation: currOperation,
+			shouldUpdateInput: true,
 		});
 	};
 
 	multiply = (input, previousResult, currOperation) => {
-		let prevResult = "";
-		if (input !== "0") {
-			if (previousResult === "" || previousResult === "0") {
-				prevResult = Number(input);
-			} else {
-				prevResult = Number(previousResult) * Number(input);
-			}
+		//If the calc is cleared and the press an operation button, do nothing
+		let prevResultString = this.state.prevResultString;
+		if (input === "0" && previousResult === 0) return;
+
+		let lastChar = prevResultString.length - 1;
+		let multiplyChar = Constants.OperatorKeys.Multiply;
+		currOperation = prevResultString[lastChar];
+
+		if (previousResult === "" || previousResult === 0) {
+			previousResult = Number(input);
+			prevResultString = input + "x";
 		} else {
-			prevResult = Number(previousResult);
+			//If there's an operation in course, switch the operation to addition
+			if (currOperation !== multiplyChar && input == previousResult) {
+				prevResultString = Helpers.switchOperation(prevResultString, multiplyChar);
+				currOperation = multiplyChar;
+			} else {
+				previousResult = Number(previousResult) * Number(input);
+				prevResultString = prevResultString + input + "x";
+				input = previousResult;
+			}
 		}
 
+		if (this.noRenderState.shouldUpdateWithoutRender) {
+			this.noRenderState.prevResult = previousResult;
+		}
 		this.setState({
-			input: "0",
+			input: input,
 			accumulator: input,
-			prevResult: prevResult,
+			prevResult: previousResult,
+			prevResultString: prevResultString,
 			currOperation: currOperation,
+			shouldUpdateInput: true,
 		});
 	};
 
 	divide = (input, previousResult, currOperation) => {
-		let prevResult = "";
-		if (input !== "0") {
-			if (previousResult === "" || previousResult === "0") {
-				prevResult = Number(input);
-			} else {
-				prevResult = Number(previousResult) / Number(input);
-			}
+		//If the calc is cleared and the press an operation button, do nothing
+		let prevResultString = this.state.prevResultString;
+		if (input === "0" && previousResult === 0) return;
+
+		let lastChar = prevResultString.length - 1;
+		let divisionChar = Constants.OperatorKeys.Division;
+		currOperation = prevResultString[lastChar];
+
+		if (previousResult === "" || previousResult === 0) {
+			previousResult = Number(input);
+			prevResultString = input + "/";
 		} else {
-			prevResult = Number(previousResult);
+			//Avoid divide by zero exception
+			if (input === "0") {
+			} else {
+				//If there's an operation in course, switch the operation to addition
+				if (currOperation !== divisionChar && input == previousResult) {
+					prevResultString = Helpers.switchOperation(prevResultString, divisionChar);
+					currOperation = divisionChar;
+				} else {
+					previousResult = Number(previousResult) / Number(input);
+					prevResultString = prevResultString + input + "/";
+					input = previousResult;
+				}
+			}
 		}
 
+		if (this.noRenderState.shouldUpdateWithoutRender) {
+			this.noRenderState.prevResult = previousResult;
+		}
 		this.setState({
-			input: "0",
+			input: input,
 			accumulator: input,
-			prevResult: prevResult,
+			prevResult: previousResult,
+			prevResultString: prevResultString,
 			currOperation: currOperation,
+			shouldUpdateInput: true,
 		});
 	};
 
