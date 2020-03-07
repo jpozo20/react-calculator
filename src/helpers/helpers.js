@@ -55,6 +55,10 @@ const Helpers = {
 
 		return result;
 	},
+	switchOperation: (prevResultString, currOperation) => {
+		let lastIndex = prevResultString.length - 1;
+		return prevResultString.substr(0, lastIndex) + currOperation;
+	},
 };
 
 export default Helpers;
