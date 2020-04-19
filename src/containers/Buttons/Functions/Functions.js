@@ -6,12 +6,21 @@ import Button from "../../../components/Button/Button";
 const Functions = (props) => {
 	const functionButtons = [];
 	//                      SQRT,     x ^ 2,     x ^ n,
-	const functions = ["%", "\u221a", "x\u00b2", "log", "logn", "C"];
+	const functions = ["%", "\u221a", "x\u00b2", "log", "logn"];
 	functions.forEach((item) => {
 		functionButtons.push(
-			<Button key={item} text={item} buttonClicked={props.buttonClicked} action="function" />
+			<Button
+				key={item}
+				text={item}
+				buttonClicked={props.buttonClicked}
+				action="function"
+				disabled={true}
+			/>
 		);
 	});
+	functionButtons.push(
+		<Button key="C" text="C" buttonClicked={props.buttonClicked} action="function" />
+	);
 	return <div className={classes.Functions}>{functionButtons}</div>;
 };
 
