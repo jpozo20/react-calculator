@@ -7,7 +7,8 @@ const Button = (props) => {
 			type="button"
 			className={classes.Button}
 			data-action={props.action}
-			onClick={props.buttonClicked}>
+			onClick={props.buttonClicked}
+			disabled={props.disabled}>
 			{props.text}
 		</button>
 	);
